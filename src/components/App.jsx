@@ -15,6 +15,7 @@ export const App = () => {
   const [images, setImages] = useState([])
   const [page, setPage] = useState(1)
   const [isLoad, setIsLoad] = useState(false)
+  // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [modalData, setModalData] = useState('')
