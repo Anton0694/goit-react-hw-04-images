@@ -1,7 +1,7 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Loader } from './Loader/Loader';
-import { Modal } from './Modal/Modal';
+import  {Modal}  from './Modal/Modal';
 import { getGallery } from '../API'
 import { Searchbar } from './Searchbar/Searchbar';
 
@@ -10,120 +10,101 @@ import { APP, ButtonLoad} from './App.styled'
 
 
 
-export class App extends Component {
-  state = {
-    searchText: '',
-    images: [],
-    page: 1,
-    isLoad: false,
-    
-    error: false,
-    showModal: false,
-    modalData: '',
-    
-  }
+export const App = () => {
+  const [searchText, setSearchText] = useState('')
+  const [images, setImages] = useState([])
+  const [page, setPage] = useState(1)
+  const [isLoad, setIsLoad] = useState(false)
+  const [error, setError] = useState(false)
+  const [showModal, setShowModal] = useState(false)
+  const [modalData, setModalData] = useState('')
+  
 
-  onHandleSubmit = event => {
-    const { page } = this.state
+ const onHandleSubmit = event => {
     const searchText = event.target.name.value.toLowerCase()
     event.preventDefault();
 
     if (searchText.trim() === '') {
       return toast.error("Empty field!")
     }
-   
-    this.setState({
-      searchText: searchText,
-      isLoad: true,
-      images: [],
 
-    })
+   setSearchText(searchText)
+   setIsLoad(true)
+   setImages([])
+   setPage(1);
+  };
 
-  setTimeout(() => {
-     try {
-       getGallery(searchText, page)
-        .then(({ data }) => {
-          if (data.hits.length === 0) {
-           
-          } this.setState({ images: data.hits })
 
-        }).finally(this.setState({ isLoad: false }))
-     } catch (error) {
-       this.setState({ error: true })
-     }
-      
-    }, 1000);
-
+  useEffect(() => {
+    if (searchText === '') return;
+    setIsLoad(true)
     
-    this.setState(prevState => 
-      ({page: prevState.page + 1})
-    )
-    
-    event.target.reset()
-    
-  } 
-
-onLoadMoreBtnClick = () => { 
-    const { searchText, page } = this.state
-    
-    this.setState({ isLoad: true })
-
-    setTimeout(() => {
-
-      try {
-        getGallery(searchText, page)
-      .then(({ data }) => this.setState((prevState) =>
-            ({ images: [...prevState.images, ...data.hits] })))
-      .finally(this.setState({isLoad: false}))
-      } catch (error) {
-        this.setState({ error: true })
-      }
-    }, 1000);
-
-    this.setState(prevState => 
-      ({page: prevState.page + 1})
-  )
-
-  }
-    
-    onSelect = (data) => {
-
-    this.setState({
-      modalData: data,
-      showModal: true
-    })
-  }
-   
- toggleModal = (event) => {
-    if (event.target === event.currentTarget) {
-      this.setState(prevState => ({showModal: !prevState.showModal}))
-    }
-    
-  }
-  closeModal = () => {
-    this.setState(prevState => ({showModal: !prevState.showModal}))
-  }
-
-  
-
-  render() {
-
-    const { showModal, isLoad, images, modalData } = this.state;
-
-    return (
-    <APP>
-        <Searchbar onHandleSubmit={this.onHandleSubmit} />
-      <ImageGallery  images={images} onSelect={this.onSelect}></ImageGallery>
-        {showModal && <Modal closeModal={this.closeModal} onModalClick={this.toggleModal} data={modalData} />}
-        
-        {isLoad ?
-          <Loader /> :
-          images.length > 0 &&
-          <ButtonLoad onClick={this.onLoadMoreBtnClick}>Load</ButtonLoad> 
+    try {
+      getGallery(searchText, page).then(({ data }) => {
+        if (data.hits.length === 0) {
+          return toast.error('No results found!');
         }
-        <ToastContainer autoClose={2000}/>
+        
+        setImages((prevImages) => [...prevImages, ...data.hits]);
+        setIsLoad(false)
+      });
+    } catch (error) {
+      setError(true)
+      setIsLoad(false)
+    }
+}, [page, searchText])
+
+
+
+  /* setPage(prevState => prevState.page + 1) */
+  /* event.target.reset() */
+
+const onLoadMoreBtnClick = () => {
+  setIsLoad(true)
+ /*  setTimeout(() => {
+    try {
+      getGallery(searchText, page)
+        .then(({ data }) => setImages((prevState) =>
+          ({ images: [...prevState.images, ...data.hits] })))
+        .finally(setIsLoad(false))
+    } catch (error) {
+      setError(true)
+    }
+  }, 1000) */
+
+  setPage((prevPage) => prevPage + 1)
+  
+  };
+  
+const onSelect = (data) => {
+  setModalData(data)
+  setShowModal(true)
+  };
+  
+  const toggleModal = (event) => {
+  
+  if (event.target === event.currentTarget) {
+    setShowModal(prevState => !prevState.showModal )
+  }
+  };
+  
+const closeModal = () => {
+  setShowModal(false);
+};
+  return (
+    <APP>
+      <Searchbar onHandleSubmit={onHandleSubmit} />
+      <ImageGallery images={images} onSelect={onSelect} />
+      {showModal && (
+        <Modal closeModal={closeModal} onModalClick={toggleModal} data={modalData} />
+      )}
+        
+      {isLoad ? (
+        <Loader />)
+        :
+        (images.length > 0 && <ButtonLoad onClick={onLoadMoreBtnClick}>Load More</ButtonLoad>
+        )}
+      <ToastContainer autoClose={2000} />
     </APP>
   );
-  }
-  
 };

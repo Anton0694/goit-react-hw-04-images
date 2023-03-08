@@ -1,18 +1,44 @@
 import { SearchBar, Form, SearchFormBtn, SearchFormInput } from "./Searchbar.styled";
 import { ImSearch as IconSearch } from "react-icons/im"
-import { Component } from "react";
 import 'react-toastify/dist/ReactToastify.css';
 import PropTypes from 'prop-types';
 
+import { useState } from 'react';
 
-export class Searchbar extends Component {      
+export const Searchbar = (props) => {
+    const [handleInputChange, setHandleInputChange] = useState('');
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        props.onHandleSubmit(event);
+    }
+
+    return (
+        <SearchBar>
+            <Form onSubmit={handleSubmit}>
+                <SearchFormBtn type="submit">
+                    <IconSearch size='2em' />
+                </SearchFormBtn>
+                <SearchFormInput
+                    type="text"
+                    name="name"
+                    value={handleInputChange}
+                    onChange={(event) => setHandleInputChange(event.target.value)}
+                    autoComplete="off"
+                    autoFocus
+                    placeholder="Search images and photos"
+                />
+            </Form>
+        </SearchBar>
+    )
+}
+
+/* export const Searchbar = (onHandleSubmit) => {      
     
-
-    render() {
         return (
         
         <SearchBar>
-                <Form onSubmit={this.props.onHandleSubmit}>
+                <Form onSubmit={onHandleSubmit}>
                     
                 <SearchFormBtn type="submit">
                         <IconSearch size='2em' />
@@ -22,7 +48,7 @@ export class Searchbar extends Component {
                     <SearchFormInput
                         type="text"
                         name="name"
-                        onChange={this.handleInputChange}
+                        onChange={handleInputChange}
                         autocomplete="off"
                         autoFocus
                         placeholder="Search images and photos"
@@ -34,9 +60,7 @@ export class Searchbar extends Component {
         </SearchBar>
     )
     }
-    
-}
-    
+     */
 
 Searchbar.propTypes = {
   onHandleSubmit: PropTypes.func.isRequired,
