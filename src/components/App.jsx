@@ -55,24 +55,8 @@ export const App = () => {
     }
 }, [page, searchText])
 
-
-
-  /* setPage(prevState => prevState.page + 1) */
-  /* event.target.reset() */
-
 const onLoadMoreBtnClick = () => {
   setIsLoad(true)
- /*  setTimeout(() => {
-    try {
-      getGallery(searchText, page)
-        .then(({ data }) => setImages((prevState) =>
-          ({ images: [...prevState.images, ...data.hits] })))
-        .finally(setIsLoad(false))
-    } catch (error) {
-      setError(true)
-    }
-  }, 1000) */
-
   setPage((prevPage) => prevPage + 1)
   
   };
