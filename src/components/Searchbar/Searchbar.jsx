@@ -11,6 +11,7 @@ export const Searchbar = (props) => {
     const handleSubmit = (event) => {
         event.preventDefault();
         props.onHandleSubmit(event);
+        setHandleInputChange('')
     }
 
     return (
