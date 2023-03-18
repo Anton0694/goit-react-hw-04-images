@@ -34,35 +34,6 @@ export const Searchbar = (props) => {
     )
 }
 
-/* export const Searchbar = (onHandleSubmit) => {      
-    
-        return (
-        
-        <SearchBar>
-                <Form onSubmit={onHandleSubmit}>
-                    
-                <SearchFormBtn type="submit">
-                        <IconSearch size='2em' />
-                        
-                </SearchFormBtn>
-
-                    <SearchFormInput
-                        type="text"
-                        name="name"
-                        onChange={handleInputChange}
-                        autocomplete="off"
-                        autoFocus
-                        placeholder="Search images and photos"
-                       
-                        
-                />
-                </Form>
-                
-        </SearchBar>
-    )
-    }
-     */
-
 Searchbar.propTypes = {
   onHandleSubmit: PropTypes.func.isRequired,
 };
